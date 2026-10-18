@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overturned — Free Health Insurance Denial Checker</title>
+<meta name="description" content="Your health insurance claim was denied. Enter your denial details and get your exact appeal deadline, what the denial code means in plain language, published overturn statistics, and your next steps. Free, private, runs in your browser.">
+<style>
+  :root{
+    --ink:#12212e; --ink2:#3d5468; --bg:#f6f8f9; --card:#ffffff; --line:#dbe4e9;
+    --teal:#0e7a6d; --teal-d:#0a5c52; --amber:#b45309; --amber-bg:#fdf3e3;
+    --red:#b3261e; --red-bg:#fdecea; --green-bg:#e7f4ef; --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  a{color:var(--teal-d)}
+  .wrap{max-width:860px;margin:0 auto;padding:0 18px 64px}
+  .beta-banner{background:var(--ink);color:#fff;text-align:center;padding:9px 14px;font-size:14px}
+  .beta-banner strong{color:#7fe3cf}
+  header{padding:30px 0 6px;text-align:center}
+  .logo{font-size:30px;font-weight:800;letter-spacing:-.5px}
+  .logo span{color:var(--teal)}
+  .tagline{color:var(--ink2);font-size:17px;margin:6px auto 0;max-width:620px}
+  .stats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:20px 0 4px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px 16px;font-size:14px;max-width:250px}
+  .stat b{display:block;font-size:19px;color:var(--teal-d)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin:20px 0;box-shadow:0 1px 3px rgba(18,33,46,.05)}
+  h2{margin:0 0 6px;font-size:21px}
+  h3{margin:18px 0 6px;font-size:16px}
+  .sub{color:var(--ink2);font-size:14.5px;margin:0 0 14px}
+  label{display:block;font-weight:600;font-size:14.5px;margin:14px 0 5px}
+  select,input[type="date"],input[type="email"]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;font-size:16px;background:#fff;color:var(--ink)}
+  select:focus,input:focus{outline:2px solid var(--teal);outline-offset:1px}
+  .hint{font-size:13px;color:var(--ink2);margin-top:4px}
+  button.cta{margin-top:20px;width:100%;padding:14px;background:var(--teal);color:#fff;border:0;border-radius:10px;font-size:17px;font-weight:700;cursor:pointer}
+  button.cta:hover{background:var(--teal-d)}
+  .privacy-note{font-size:13px;color:var(--ink2);text-align:center;margin-top:10px}
+  #verdict{display:none}
+  .verdict-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+  .deadline{font-size:26px;font-weight:800;line-height:1.2}
+  .daysleft{font-weight:700;padding:5px 12px;border-radius:999px;font-size:14px;white-space:nowrap}
+  .ok{background:var(--green-bg);color:var(--teal-d)}
+  .soon{background:var(--amber-bg);color:var(--amber)}
+  .late{background:var(--red-bg);color:var(--red)}
+  .meaning{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin:14px 0;font-size:15px}
+  ol.steps{margin:8px 0 0;padding-left:21px}
+  ol.steps li{margin:7px 0}
+  .src{font-size:12.5px;color:var(--ink2)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .row button{flex:1;min-width:180px;padding:12px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;border:1px solid var(--teal);background:#fff;color:var(--teal-d)}
+  .row button.primary{background:var(--teal);color:#fff}
+  .filing{border:2px solid var(--teal);border-radius:var(--radius);padding:22px;margin:20px 0;background:#f2faf8}
+  .price{font-size:15px;margin:4px 0}
+  .price b{font-size:19px}
+  details{border-top:1px solid var(--line);padding:11px 0}
+  details:first-of-type{border-top:0}
+  summary{font-weight:700;cursor:pointer;font-size:15.5px}
+  details p{margin:7px 0 2px;color:var(--ink2);font-size:14.5px}
+  .disclaimer{font-size:12.5px;color:var(--ink2);border-top:1px solid var(--line);margin-top:28px;padding-top:16px}
+  footer{text-align:center;color:var(--ink2);font-size:13px;margin-top:26px}
+  .formmsg{font-size:14.5px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="beta-banner">Public beta — free while we test. <strong>The checker runs 100% in your browser: nothing you enter is uploaded or stored.</strong></div>
+<div class="wrap">
+<header>
+  <div class="logo">Over<span>turned</span></div>
+  <p class="tagline">Your health insurance denied a claim or a prior authorization. Most people never appeal — and most appeals that are filed, win. Find out exactly where you stand.</p>
+  <div class="stats">
+    <div class="stat"><b>1 in 5</b>privately insured adults had a coverage denial in the past year*</div>
+    <div class="stat"><b>43–67%</b>of appealed prior-auth denials were overturned*</div>
+    <div class="stat"><b>&lt;1%</b>of denied claims are ever appealed*</div>
+  </div>
+  <p class="src">*Published analyses: Commonwealth Fund 2025 Affordability Survey; KFF prior-authorization analyses, 2025 data. See Sources below.</p>
+</header>
+
+<section class="card" id="checker">
+  <h2>Check your denial — free</h2>
+  <p class="sub">Answer four questions. You will get: what your denial actually means, your appeal deadline, published overturn statistics for cases like yours, and your next steps.</p>
+
+  <label for="planType">1. What kind of health plan do you have?</label>
+  <select id="planType">
+    <option value="employer">Employer plan (through a job — mine or a family member's)</option>
+    <option value="marketplace">Marketplace plan (HealthCare.gov / Covered California / state exchange)</option>
+    <option value="medicare_advantage">Medicare Advantage</option>
+    <option value="medicaid">Medicaid / Medi-Cal</option>
+    <option value="other">Other / I'm not sure</option>
+  </select>
+
+  <label for="denialKind">2. What was denied?</label>
+  <select id="denialKind">
+    <option value="priauth">Prior authorization — approval for a service, scan, or medication was refused before I got it</option>
+    <option value="claim">A claim — I already received the service and the insurer refused to pay</option>
+  </select>
+
+  <label for="denialReason">3. What reason did the insurer give?</label>
+  <select id="denialReason">
+    <option value="medical_necessity">Not medically necessary (often shown as code CO-50)</option>
+    <option value="no_auth">No prior authorization on file (often CO-197)</option>
+    <option value="not_covered">Service or item not covered by my plan</option>
+    <option value="bundled">Bundled / included in another payment (often CO-97)</option>
+    <option value="missing_info">Missing information or paperwork (often CO-16)</option>
+    <option value="experimental">Experimental or investigational</option>
+    <option value="step_therapy">Step therapy — I must try a different treatment first</option>
+    <option value="out_of_network">Out of network</option>
+    <option value="unknown">I don't know / the letter is unclear</option>
+  </select>
+  <p class="hint">Your denial letter or Explanation of Benefits (EOB) shows the reason and usually a code. If you can't find it, choose "I don't know" — the deadline still applies.</p>
+
+  <label for="denialDate">4. What date is on the denial letter or EOB?</label>
+  <input type="date" id="denialDate">
+  <p class="hint">Appeal clocks run from the date on the notice. If you have several dates, use the earliest one to be safe.</p>
+
+  <button class="cta" id="checkBtn">Get my Verdict Card</button>
+  <p class="privacy-note">Private by design: this check happens entirely on your device. We never see your answers.</p>
+</section>
+
+<section class="card" id="verdict" aria-live="polite">
+  <h2>Your Verdict Card</h2>
+  <div class="verdict-head">
+    <div>
+      <div class="sub" style="margin:0">Appeal deadline (internal appeal)</div>
+      <div class="deadline" id="vDeadline">—</div>
+      <div class="sub" id="vRule" style="margin:2px 0 0">—</div>
+    </div>
+    <div class="daysleft ok" id="vDays">—</div>
+  </div>
+  <div class="meaning" id="vMeaning"></div>
+  <h3>Your chances, honestly stated</h3>
+  <p id="vOdds" style="margin:0"></p>
+  <h3>Your next steps</h3>
+  <ol class="steps" id="vSteps"></ol>
+  <h3>If the internal appeal fails</h3>
+  <p id="vExternal" style="margin:0"></p>
+  <div class="row">
+    <button class="primary" id="downloadBtn">Download Verdict Card (image)</button>
+    <button id="copyBtn">Copy as text</button>
+  </div>
+  <p class="src" style="margin-top:12px">Deadlines shown use the standard federal rules for your plan type, cited below. Your plan or state may give you more time — never less than these minimums for most plan types. Always confirm against your own denial letter and plan documents. This card is information, not legal or medical advice.</p>
+</section>
+
+<section class="filing" id="filing">
+  <h2 style="margin-top:0">Don't want to file it yourself? Join the filing beta.</h2>
+  <p class="sub">Overturned's done-for-you service files your appeal under your signed authorization, tracks every deadline, and escalates to external review if the first appeal fails. It is in a limited beta while we build our outcome database.</p>
+  <p class="price"><b>$79</b> per appeal &nbsp;·&nbsp; <b>$99</b> including external-review escalation &nbsp;·&nbsp; refund if we don't file</p>
+  <p class="sub">Leave an email and your denial category — no medical documents, no letters, nothing sensitive. We'll invite people in order as beta spots open.</p>
+  <form id="waitlistForm">
+    <label for="wlEmail">Email</label>
+    <input type="email" id="wlEmail" required placeholder="you@example.com">
+    <label for="wlCat">Denial category</label>
+    <select id="wlCat">
+      <option>Prior authorization denied</option>
+      <option>Claim denied after service</option>
+      <option>Medication / pharmacy denial</option>
+      <option>Other</option>
+    </select>
+    <button class="cta" type="submit">Join the filing beta</button>
+    <p class="formmsg" id="wlMsg"></p>
+  </form>
+</section>
+
+<section class="card">
+  <h2>How an appeal actually works</h2>
+  <ol class="steps">
+    <li><strong>Internal appeal.</strong> You (or an authorized representative) ask the insurer to reconsider. For most employer and Marketplace plans, federal rules give you at least 180 days from the denial notice to file. The insurer must decide urgent cases within 72 hours, pre-service cases typically within 30 days, and post-service claims typically within 60 days.</li>
+    <li><strong>Get the file.</strong> You are entitled to your full claim file and the criteria the insurer used. A denial that can't show its criteria is a weak denial.</li>
+    <li><strong>External review.</strong> If the internal appeal fails, an independent reviewer outside the insurer can overturn it — and that decision binds the insurer. In California this is the Department of Managed Health Care's Independent Medical Review (IMR), which is free.</li>
+    <li><strong>Deadlines are the whole game.</strong> Miss the internal-appeal window and most later rights shrink or disappear. That is why this checker starts with the date.</li>
+  </ol>
+</section>
+
+<section class="card">
+  <h2>Questions</h2>
+  <details>
+    <summary>Is this legal advice?</summary>
+    <p>No. Overturned provides general information about appeal rights, deadlines, and published statistics. It is not legal or medical advice and does not create an attorney–client or doctor–patient relationship. For advice about your specific case, consult a licensed attorney or your treating clinician.</p>
+  </details>
+  <details>
+    <summary>How sure are you about my deadline?</summary>
+    <p>The date shown is computed from the standard federal rule for your plan type (for example, the 180-day internal-appeal window for most employer and Marketplace plans, or 60 days for Medicare Advantage reconsideration). Some plans and states allow more time. Treat the date here as the earliest safe deadline and confirm with your plan. If your computed date has passed, appeal anyway — late appeals are sometimes accepted for good cause, and external review or a regulator complaint may still be open.</p>
+  </details>
+  <details>
+    <summary>Why do so few people appeal?</summary>
+    <p>The Commonwealth Fund's 2025 survey found about 1 in 5 privately insured adults had a denial in the past year, and only about half of those with a claim denial appealed. KFF found fewer than 1% of denied in-network ACA claims are appealed. Yet appealed denials are overturned at high rates — 43–67% of appealed prior-authorization denials in KFF's analysis of 2025 data. The system counts on people giving up.</p>
+  </details>
+  <details>
+    <summary>What does the checker do with my information?</summary>
+    <p>Nothing leaves your browser. The check is computed on your device; there is no account, no upload, and no tracking of your answers. Only the optional filing-beta form sends anything (your email and denial category), and only if you submit it.</p>
+  </details>
+  <details>
+    <summary>What does the filing service do that I can't do myself?</summary>
+    <p>You can absolutely appeal yourself — the steps above are the whole process. The service exists for people who would otherwise not appeal at all: it assembles the packet, files it through the insurer's portal, fax, or mail under your signed authorization, calendars every deadline, and escalates to external review. Every filed case also improves the published-statistics picture for the next person.</p>
+  </details>
+</section>
+
+<section class="card">
+  <h2>Sources</h2>
+  <p class="src" style="font-size:13.5px;color:var(--ink2)">
+    Commonwealth Fund, 2025 Affordability Survey (published June 2026): 21% of privately insured working-age adults reported a coverage denial in the past year; about half of those with a claim denial appealed.<br>
+    KFF, "Prior Authorization Metrics Provide New Insights into Insurer Practices, but Gaps Remain" (2025 data): insurers denied 12% (Medicare Advantage) to 18% (ACA Marketplace) of standard prior-authorization requests; 43–67% of appealed denials were overturned depending on the market. KFF analysis of HealthCare.gov data: about 19% of in-network ACA claims denied in 2024, under 1% appealed; Medicare Advantage appeals overturned at roughly 80%.<br>
+    Deadline rules: Affordable Care Act internal claims &amp; appeals standards, 45 CFR 147.136 (at least 180 days to file an internal appeal for group and individual health plans; external review generally within 4 months of the final internal denial); Medicare Advantage reconsideration, 42 CFR 422.582 (60 days from the denial notice, extendable for good cause); California Independent Medical Review, Health &amp; Safety Code §1374.30 et seq. (free; generally apply within 6 months of the plan's final decision; urgent cases expedited).
+  </p>
+</section>
+
+<p class="disclaimer">Overturned is an information tool in public beta. It is not a law firm, medical provider, or insurance company, and it is not affiliated with any insurer or government agency. Deadlines and rights vary by plan, state, and circumstance; the information here is general and may be incomplete for your situation. Verify your deadline on your denial letter or with your plan before relying on it. If your situation involves urgent care, an emergency, or a large amount of money, consult a licensed professional promptly.</p>
+
+<footer>Overturned — public beta. Built to make the appeal the default, not the exception.</footer>
+</div>
+<canvas id="cardCanvas" width="1080" height="1080" style="display:none"></canvas>
+
+<script>
+(function(){
+  var RULES = {
+    employer:{days:180, label:"Employer plan", rule:"Federal ACA standard (45 CFR 147.136): at least 180 days from the denial notice to file an internal appeal."},
+    marketplace:{days:180, label:"Marketplace plan", rule:"Federal ACA standard (45 CFR 147.136): at least 180 days from the denial notice to file an internal appeal."},
+    medicare_advantage:{days:60, label:"Medicare Advantage", rule:"Medicare Advantage rule (42 CFR 422.582): 60 days from the denial notice to request reconsideration; extensions exist for good cause."},
+    medicaid:{days:90, label:"Medicaid / Medi-Cal", rule:"State fair-hearing window: in California, generally 90 days from the Notice of Action to request a State Hearing. Other states vary — check your notice."},
+    other:{days:180, label:"Plan", rule:"Most health plans follow the federal 180-day internal-appeal standard. Confirm your exact window on your denial letter — treat this date as your safe deadline."}
+  };
+  var MEANINGS = {
+    medical_necessity:"Your insurer says the service was \"not medically necessary\" (commonly code CO-50). This is a judgment call by the insurer's reviewer — and it is the most commonly overturned kind of denial, because your treating doctor can answer it directly with records and a letter explaining why you need this care.",
+    no_auth:"Your insurer says no prior authorization was on file (commonly code CO-197). This is a paperwork denial, not a medical one. It can often be cured by a retroactive authorization request, proof of emergency circumstances, or evidence that authorization was obtained or wasn't required.",
+    not_covered:"Your insurer says this service or item is not a covered benefit under your plan. Check the plan's evidence-of-coverage for the actual exclusion and any exception process — 'not covered' is sometimes applied to things that are covered with documentation or under a different benefit category.",
+    bundled:"Your insurer says this service was already paid for as part of another service (commonly code CO-97). This is usually a billing and coding dispute between the provider and the insurer — your provider's billing office should be your first call, and they often must be the one to appeal it.",
+    missing_info:"Your insurer says the claim lacked required information (commonly code CO-16). This is frequently the fastest denial to fix: call, ask exactly what is missing, and submit it. Keep an eye on the appeal clock while you do — the deadline keeps running.",
+    experimental:"Your insurer labels the treatment experimental or investigational. These denials are answered with evidence: peer-reviewed studies, specialty-society guidelines, and your doctor's explanation of why standard options are unsuitable for you. External reviewers overturn these more often than insurers expect, because the reviewer is an independent specialist.",
+    step_therapy:"Your insurer requires you to try a preferred (usually cheaper) treatment first. You can request a step-therapy exception — the strongest grounds are that you already tried the required treatment, it failed or harmed you, or your doctor documents why it is inappropriate for you.",
+    out_of_network:"Your insurer says the provider was out of network. Check two things: whether you had a network-gap situation (no in-network specialist available), and whether the No Surprises Act applies — it protects you in emergencies and for many hospital-based services you didn't choose.",
+    unknown:"The letter doesn't say clearly why. That itself is useful information: insurers are required to give a specific reason. Call the number on the letter, ask for the exact reason and claim code in writing, and request your complete claim file — you are entitled to it."
+  };
+  var EXTRA_STEP = {
+    medical_necessity:"Ask your treating doctor for a letter that answers the denial point by point, and request a peer-to-peer review between your doctor and the insurer's medical director.",
+    no_auth:"Ask the insurer or your provider about retroactive authorization, and gather anything showing emergency circumstances, a referral, or that authorization was requested.",
+    not_covered:"Read the plan's exclusion language yourself and ask the insurer, in writing, for the exception or reconsideration process for this benefit.",
+    bundled:"Call the provider's billing office first: ask them to review the coding and, if needed, file the provider-side appeal. Get the name of who you spoke to.",
+    missing_info:"Call the insurer, write down exactly which document or code is missing, submit it the same day, and keep the confirmation number.",
+    experimental:"Ask your doctor to attach supporting studies or specialty guidelines to the appeal, and note the external-review right below — independent specialists decide these.",
+    step_therapy:"Have your doctor document any prior trial, failure, or intolerance of the required treatment and submit a step-therapy exception request with the appeal.",
+    out_of_network:"Ask in writing whether a network-gap exception applies (no in-network option within reasonable distance/time) and whether the No Surprises Act covers this bill.",
+    unknown:"On the call, ask: the specific reason, the claim adjustment code, the internal appeal address/fax/portal, and the deadline they have on file. Write it all down."
+  };
+  function oddsText(plan, kind){
+    if(plan==="medicare_advantage") return "When Medicare Advantage prior-authorization denials are appealed, roughly 8 in 10 are overturned (KFF analysis) — yet only about 1 in 10 denied requests is ever appealed. These are published population statistics, not a prediction about your case.";
+    if(plan==="medicaid") return "No reliable national overturn rate is published for Medicaid fair hearings; outcomes vary by state and issue. What is consistent in the research: most beneficiaries never request a hearing at all, which means the default outcome of doing nothing is simply 'denied'.";
+    var base = "In KFF's analysis of 2025 prior-authorization data, 43–67% of appealed denials were overturned, depending on the market. Fewer than 1% of denied in-network ACA claims are ever appealed (KFF), and about 1 in 5 privately insured adults was denied in the past year (Commonwealth Fund, 2025).";
+    if(kind==="claim") base += " Overturn statistics are published mainly for prior-authorization cases; claim denials are appealed even less often.";
+    return base + " These are published population statistics, not a prediction about your case — but they show why filing is worth it.";
+  }
+  function externalText(plan){
+    if(plan==="medicare_advantage") return "If your plan upholds its denial on reconsideration, your case is automatically forwarded to an independent review organization outside the plan. After that level, further appeal to an administrative law judge is available (an amount-in-controversy minimum applies). Keep every notice — the clock rules differ at each level.";
+    if(plan==="medicaid") return "The State Fair Hearing is itself the independent review. In California: request within 90 days of the Notice of Action; if you request within 10 days (or before the change takes effect), your benefits may continue while you wait (aid paid pending). The hearing is free, usually by phone, and the decision binds the plan.";
+    return "After a final internal denial you generally have 4 months to request external review under the federal standard — an independent reviewer decides, and the decision binds your insurer. In California, use the Department of Managed Health Care's Independent Medical Review (IMR): it is free, you generally apply within 6 months of the plan's final decision, and you may qualify sooner if your case is urgent, the plan missed its own deadlines, or you already appealed and 30 days passed without a decision.";
+  }
+  function fmt(d){ return d.toLocaleDateString("en-US",{weekday:"long", year:"numeric", month:"long", day:"numeric"}); }
+  var lastVerdict = null;
+  document.getElementById("checkBtn").addEventListener("click", function(){
+    var plan = document.getElementById("planType").value;
+    var kind = document.getElementById("denialKind").value;
+    var reason = document.getElementById("denialReason").value;
+    var dv = document.getElementById("denialDate").value;
+    if(!dv){ alert("Please enter the date on your denial letter — the deadline depends on it."); return; }
+    var parts = dv.split("-");
+    var denial = new Date(+parts[0], +parts[1]-1, +parts[2]);
+    var rule = RULES[plan];
+    var deadline = new Date(denial.getTime()); deadline.setDate(deadline.getDate()+rule.days);
+    var today = new Date(); today.setHours(0,0,0,0);
+    var daysLeft = Math.round((deadline - today)/86400000);
+    document.getElementById("vDeadline").textContent = fmt(deadline);
+    document.getElementById("vRule").textContent = rule.label + " · denial dated " + fmt(denial) + " · " + rule.rule;
+    var badge = document.getElementById("vDays");
+    if(daysLeft < 0){ badge.textContent = "Standard window passed " + Math.abs(daysLeft) + " days ago — read below, you may still have options"; badge.className = "daysleft late"; }
+    else if(daysLeft <= 30){ badge.textContent = daysLeft + " days left — act now"; badge.className = "daysleft soon"; }
+    else { badge.textContent = daysLeft + " days left"; badge.className = "daysleft ok"; }
+    document.getElementById("vMeaning").innerHTML = "<strong>What this denial means:</strong> " + MEANINGS[reason];
+    document.getElementById("vOdds").textContent = oddsText(plan, kind);
+    var steps = [
+      "Put " + fmt(deadline) + " on your calendar now. File before it, and keep proof of sending (portal confirmation, fax receipt, or certified-mail slip).",
+      "Request your complete claim file and the exact criteria the insurer used — you are entitled to both, free.",
+      EXTRA_STEP[reason],
+      "File the internal appeal using the address, fax, or portal on your denial letter. One page is enough to start: who you are, the claim number, what was denied, why it should be covered, and what you are asking for.",
+      "Calendar the insurer's decision date (urgent: ~72 hours; pre-service: ~30 days; post-service: ~60 days) and follow up if it slips — a missed insurer deadline strengthens your external-review position."
+    ];
+    if(daysLeft < 0) steps.unshift("Your standard window appears to have passed. Do not assume it's over: file the appeal anyway and state your good cause for lateness, and check the external-review and regulator-complaint options below — some windows run from the final denial, not the first one.");
+    var ol = document.getElementById("vSteps"); ol.innerHTML = "";
+    steps.forEach(function(s){ var li = document.createElement("li"); li.textContent = s; ol.appendChild(li); });
+    document.getElementById("vExternal").textContent = externalText(plan);
+    var v = document.getElementById("verdict"); v.style.display = "block";
+    v.scrollIntoView({behavior:"smooth", block:"start"});
+    lastVerdict = {deadline: fmt(deadline), daysLeft: daysLeft, plan: rule.label, meaning: MEANINGS[reason], rule: rule.rule};
+  });
+  function wrap(ctx, text, x, y, maxW, lh){
+    var words = text.split(" "), line = "", yy = y;
+    for(var i=0;i<words.length;i++){
+      var t = line ? line + " " + words[i] : words[i];
+      if(ctx.measureText(t).width > maxW && line){ ctx.fillText(line, x, yy); line = words[i]; yy += lh; }
+      else line = t;
+    }
+    if(line) ctx.fillText(line, x, yy);
+    return yy + lh;
+  }
+  document.getElementById("downloadBtn").addEventListener("click", function(){
+    if(!lastVerdict) return;
+    var c = document.getElementById("cardCanvas"), ctx = c.getContext("2d");
+    ctx.fillStyle = "#12212e"; ctx.fillRect(0,0,1080,1080);
+    ctx.fillStyle = "#7fe3cf"; ctx.font = "bold 44px sans-serif"; ctx.fillText("OVERTURNED", 70, 110);
+    ctx.fillStyle = "#ffffff"; ctx.font = "30px sans-serif"; ctx.fillText("Health insurance denial — Verdict Card", 70, 165);
+    ctx.font = "26px sans-serif"; ctx.fillStyle = "#cfe0ea"; ctx.fillText(lastVerdict.plan + " · internal appeal deadline", 70, 260);
+    ctx.font = "bold 64px sans-serif"; ctx.fillStyle = "#ffffff";
+    var y = wrap(ctx, lastVerdict.deadline, 70, 345, 940, 76);
+    ctx.font = "bold 40px sans-serif"; ctx.fillStyle = lastVerdict.daysLeft < 0 ? "#ff9d94" : (lastVerdict.daysLeft <= 30 ? "#ffd28a" : "#7fe3cf");
+    ctx.fillText(lastVerdict.daysLeft < 0 ? "Standard window passed — options may remain" : lastVerdict.daysLeft + " days left to appeal", 70, y + 20);
+    ctx.font = "28px sans-serif"; ctx.fillStyle = "#e8f0f4";
+    y = wrap(ctx, lastVerdict.meaning, 70, y + 110, 940, 40);
+    ctx.font = "24px sans-serif"; ctx.fillStyle = "#9fb6c4";
+    wrap(ctx, "Deadlines use the standard federal rules for this plan type. Verify against your denial letter. Information only — not legal or medical advice. Generated " + new Date().toLocaleDateString("en-US") + " by the free Overturned denial checker.", 70, 950, 940, 34);
+    var a = document.createElement("a"); a.download = "verdict-card.png"; a.href = c.toDataURL("image/png"); a.click();
+  });
+  document.getElementById("copyBtn").addEventListener("click", function(){
+    if(!lastVerdict) return;
+    var txt = "MY VERDICT CARD — Overturned denial checker\nPlan: " + lastVerdict.plan + "\nInternal appeal deadline: " + lastVerdict.deadline + " (" + (lastVerdict.daysLeft < 0 ? "standard window passed" : lastVerdict.daysLeft + " days left") + ")\nRule: " + lastVerdict.rule + "\nWhat my denial means: " + lastVerdict.meaning + "\nVerify against your denial letter. Information only, not legal or medical advice.";
+    if(navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){ alert("Verdict Card copied as text."); });
+  });
+  document.getElementById("waitlistForm").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var email = document.getElementById("wlEmail").value;
+    var cat = document.getElementById("wlCat").value;
+    var msg = document.getElementById("wlMsg");
+    msg.textContent = "Joining…";
+    fetch("https://formsubmit.co/ajax/nadeem.cs.iit@gmail.com", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      body: JSON.stringify({email: email, category: cat, _subject: "Overturned filing beta — new signup", _template: "table"})
+    }).then(function(r){ if(!r.ok) throw new Error("bad"); return r.json(); })
+    .then(function(){ msg.textContent = "You're on the list. We'll email you when a filing-beta spot opens."; document.getElementById("waitlistForm").reset(); })
+    .catch(function(){ msg.innerHTML = "The form didn't go through. Email <a href=\"mailto:nadeem.cs.iit@gmail.com?subject=Overturned%20filing%20beta\">nadeem.cs.iit@gmail.com</a> with subject “Filing beta” and your denial category instead."; });
+  });
+})();
+</script>
+</body>
+</html>
